@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+
+    // ---- Users (public profile for the friend system) ----
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && uid() == userId;
+
+      // Friends sub-collection.
+      match /friends/{friendId} {
+        allow read: if signedIn() && uid() == userId;
+        // Owner manages their own list...
+        allow write: if signedIn() && uid() == userId;
+        // ...and the invited person may add themselves back when accepting,
+        // but only if the owner really sent them a request.
+        allow create: if signedIn() && uid() == friendId
+          && exists(/databases/$(database)/documents/users/$(friendId)/friendRequests/$(userId));
+      }
+
+      // Friend requests addressed to this user.
+      match /friendRequests/{reqId} {
+        allow read: if signedIn() && uid() == userId;
+        allow create: if signedIn() && request.resource.data.fromUid == uid();
+        allow delete: if signedIn() && uid() == userId;
+      }
+
+      // Notification inbox: owner reads/manages; any signed-in user may drop
+      // a notification in (e.g. "you were added to a lavoura").
+      match /inbox/{itemId} {
+        allow read, update, delete: if signedIn() && uid() == userId;
+        allow create: if signedIn();
+      }
+
+      // FCM tokens: only the owner.
+      match /tokens/{tokenId} {
+        allow read, write: if signedIn() && uid() == userId;
+      }
+    }
+
+    // ---- Farms (lavouras) and everything under them ----
+    match /farms/{farmId} {
+      allow read: if signedIn() && uid() in resource.data.members;
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == uid()
+        && uid() in request.resource.data.members;
+      // Owner edits anything; a member may edit (to join/leave the members list).
+      allow update: if signedIn()
+        && (resource.data.ownerUid == uid() || uid() in resource.data.members);
+      allow delete: if signedIn() && resource.data.ownerUid == uid();
+
+      function memberOfFarm() {
+        return signedIn() &&
+          uid() in get(/databases/$(database)/documents/farms/$(farmId)).data.members;
+      }
+
+      match /greenhouses/{ghId} { allow read, write: if memberOfFarm(); }
+      match /crops/{cropId}     { allow read, write: if memberOfFarm(); }
+      match /harvests/{hId}     { allow read, write: if memberOfFarm(); }
+      match /reminders/{rId}    { allow read, write: if memberOfFarm(); }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+name: Build Baruck APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Restaurar google-services.json
+        env: { GOOGLE_SERVICES_JSON: '${{ secrets.GOOGLE_SERVICES_JSON }}' }
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          else
+            echo "::error::Falta o secret GOOGLE_SERVICES_JSON."; exit 1
+          fi
+
+      - name: Restaurar keystore
+        env: { KEYSTORE_B64: '${{ secrets.KEYSTORE_B64 }}' }
+        run: |
+          mkdir -p keystore
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > keystore/baruck-debug.jks
+            echo "Keystore do secret (SHA-1 bate com o Firebase)."
+          else
+            keytool -genkeypair -v -keystore keystore/baruck-debug.jks \
+              -storepass baruck123 -keypass baruck123 -alias baruck \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Baruck Debug, O=Baruck, C=BR"
+            echo "::warning::Keystore nova gerada — o login Google so funciona registrando o novo SHA-1 no Firebase."
+          fi
+
+      - name: Build debug APK
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: baruck-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
