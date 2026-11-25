@@ -41,7 +41,7 @@ class BaruckViewModel(app: Application) : AndroidViewModel(app) {
     val profileState: StateFlow<ProfileState> = uid.flatMapLatest { id ->
         if (id == null) flowOf(ProfileState.SignedOut)
         else repo.profile(id)
-            .map { p -> if (p == null) ProfileState.Missing else ProfileState.Ready(p) }
+            .map { p -> if (p == null || p.username.isBlank()) ProfileState.Missing else ProfileState.Ready(p) }
             .onStart { emit(ProfileState.Loading) }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, ProfileState.Loading)
 

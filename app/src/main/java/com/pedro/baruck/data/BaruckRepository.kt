@@ -66,11 +66,13 @@ class BaruckRepository(
             val nameRef = db.collection("usernames").document(u)
             val existing = tx.get(userRef)
             val taken = tx.get(nameRef)
-            if (!existing.exists()) {
+            // cria, ou completa um perfil antigo que ainda não tinha @usuário
+            if (!existing.exists() || existing.getString("username").isNullOrBlank()) {
                 if (taken.exists() && taken.getString("uid") != me) error("@$u já está em uso")
                 tx.set(nameRef, mapOf("uid" to me))
+                val xp = (existing.getLong("xp") ?: 0L)
                 tx.set(userRef, mapOf("name" to name.trim(), "username" to u, "bio" to bio.trim(),
-                    "avatar" to avatar, "xp" to 0))
+                    "avatar" to avatar, "xp" to xp))
             }
             true
         }.await()
