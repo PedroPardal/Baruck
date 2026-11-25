@@ -1,6 +1,5 @@
 package com.pedro.baruck.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -23,6 +22,11 @@ object BaruckColors {
     val GreenDark = Color(0xFF58A700)    // sombra do botão verde
     val GreenSoft = Color(0xFFD7FFB8)    // fundo suave
     val Blue = Color(0xFF1CB0F6)
+    val BlueSoft = Color(0xFFDDF4FF)
+    val YellowDark = Color(0xFFE5A400)
+    val OrangeSoft = Color(0xFFFFEBCC)
+    val OrangeDark = Color(0xFFE08600)
+    val RedSoft = Color(0xFFFFDFE0)
     val BlueDark = Color(0xFF1899D6)
     val Red = Color(0xFFFF4B4B)
     val RedDark = Color(0xFFEA2B2B)
@@ -74,12 +78,20 @@ private val light = lightColorScheme(
     secondary = BaruckColors.Blue,
     background = BaruckColors.Bg,
     onBackground = BaruckColors.Ink,
+    surfaceVariant = Color(0xFFF7F7F7),
+    onSurfaceVariant = BaruckColors.InkSoft,
+    surfaceContainer = Color.White,
+    surfaceContainerHigh = Color.White,
+    surfaceContainerHighest = Color(0xFFF7F7F7),
+    surfaceContainerLow = Color.White,
+    surfaceContainerLowest = Color.White,
     surface = BaruckColors.Card,
     onSurface = BaruckColors.Ink,
     error = BaruckColors.Red,
     outline = BaruckColors.Line
 )
 
+@Suppress("unused")
 private val dark = darkColorScheme(
     primary = BaruckColors.Green,
     onPrimary = Color.White,
@@ -92,13 +104,11 @@ private val dark = darkColorScheme(
     outline = BaruckColors.DarkLine
 )
 
+/** Sempre claro, mesmo com o celular no modo escuro. */
 @Composable
-fun BaruckTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun BaruckTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = if (darkTheme) dark else light,
+        colorScheme = light,
         typography = typography(),
         shapes = shapes,
         content = content

@@ -6,11 +6,9 @@
  * This file watches that collection, looks up the user's FCM tokens
  * (users/{uid}/tokens/{token}) and sends a push to each device.
  *
- * It also sends a push when a friend request is created, and runs a
- * daily scheduled check that pushes reminders whose dueAt has passed.
+ * Lembretes vencidos são verificados pelo próprio app (WorkManager).
  */
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
-const { onSchedule } = require("firebase-functions/v2/scheduler");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
@@ -58,53 +56,11 @@ exports.onInbox = onDocumentCreated(
   async (event) => {
     const d = event.data && event.data.data();
     if (!d) return;
-    await pushTo(
-      event.params.uid,
-      d.title || "Baruck",
-      d.body || "",
-      d.data || {}
-    );
+    await pushTo(event.params.uid, d.title || "Baruck", d.body || "", {
+      inboxId: event.params.itemId,
+      type: d.type || "",
+      farmId: d.farmId || "",
+      fromAvatar: d.fromAvatar || "baruck",
+    });
   }
 );
-
-// 2) Notify a user when someone sends them a friend request.
-exports.onFriendRequest = onDocumentCreated(
-  "users/{uid}/friendRequests/{reqId}",
-  async (event) => {
-    const d = event.data && event.data.data();
-    if (!d) return;
-    await pushTo(
-      event.params.uid,
-      "Novo pedido de amizade",
-      `${d.fromName || "Alguém"} quer te adicionar no Baruck`,
-      { type: "friend_request", fromUid: d.fromUid || "" }
-    );
-  }
-);
-
-// 3) Every 15 minutes, fire reminders that are due and not yet sent.
-exports.dueReminders = onSchedule("every 15 minutes", async () => {
-  const now = admin.firestore.Timestamp.now();
-  const due = await db
-    .collectionGroup("reminders")
-    .where("done", "==", false)
-    .where("notified", "==", false)
-    .where("dueAt", "<=", now)
-    .get();
-
-  const batch = db.batch();
-  for (const doc of due.docs) {
-    const r = doc.data();
-    const members = Array.isArray(r.targets) ? r.targets : [];
-    await Promise.all(
-      members.map((uid) =>
-        pushTo(uid, r.title || "Lembrete", r.body || "", {
-          type: "reminder",
-          farmId: r.farmId || "",
-        })
-      )
-    );
-    batch.update(doc.ref, { notified: true });
-  }
-  await batch.commit();
-});

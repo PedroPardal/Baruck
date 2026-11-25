@@ -1,21 +1,4 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "reminders",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "done", "order": "ASCENDING" },
-        { "fieldPath": "dueAt", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "harvests",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "cropId", "order": "ASCENDING" },
-        { "fieldPath": "date", "order": "DESCENDING" }
-      ]
-    }
-  ],
+  "indexes": [],
   "fieldOverrides": []
 }
