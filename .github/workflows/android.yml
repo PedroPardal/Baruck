@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -60,3 +62,13 @@ jobs:
           name: baruck-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Publicar APK como release
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk Baruck.apk
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest Baruck.apk \
+            --title "Baruck (build ${{ github.run_number }})" \
+            --notes "APK de teste gerado automaticamente. Baixe o Baruck.apk e instale no celular." \
+            --latest
