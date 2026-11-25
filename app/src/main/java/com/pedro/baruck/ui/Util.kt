@@ -60,3 +60,31 @@ fun sameYear(a: Date?, b: Date): Boolean {
     val cb = Calendar.getInstance().apply { time = b }
     return ca.get(Calendar.YEAR) == cb.get(Calendar.YEAR)
 }
+
+private val hm = SimpleDateFormat("HH:mm", ptBR)
+private val dm = SimpleDateFormat("dd/MM", ptBR)
+
+/** Hora se for hoje; senão dia/mês. */
+fun chatTime(ms: Long): String {
+    if (ms <= 0) return ""
+    val d = Date(ms)
+    return if (sameDay(d, Date())) hm.format(d) else dm.format(d)
+}
+
+fun clock(ms: Long): String = hm.format(Date(ms))
+
+fun sameDay(a: Date, b: Date): Boolean {
+    val ca = Calendar.getInstance().apply { time = a }
+    val cb = Calendar.getInstance().apply { time = b }
+    return ca.get(Calendar.YEAR) == cb.get(Calendar.YEAR) && ca.get(Calendar.DAY_OF_YEAR) == cb.get(Calendar.DAY_OF_YEAR)
+}
+
+fun dayLabel(ms: Long): String {
+    val d = Date(ms)
+    val y = Date(System.currentTimeMillis() - 24 * 3600 * 1000L)
+    return when {
+        sameDay(d, Date()) -> "Hoje"
+        sameDay(d, y) -> "Ontem"
+        else -> shortDate(d)
+    }
+}

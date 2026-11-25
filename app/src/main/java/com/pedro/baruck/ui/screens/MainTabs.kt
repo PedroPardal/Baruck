@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.pedro.baruck.R
 import com.pedro.baruck.data.Farm
+import com.pedro.baruck.notify.Updates
 import com.pedro.baruck.ui.*
 import com.pedro.baruck.ui.components.*
 import com.pedro.baruck.ui.theme.BaruckColors
@@ -46,6 +47,7 @@ fun MainTabs(vm: BaruckViewModel, nav: NavController) {
     val inbox by vm.inbox.collectAsState()
     val requests by vm.requests.collectAsState()
     val unread = inbox.count { !it.read }
+    val chatUnread by vm.chatUnread.collectAsState()
 
     Scaffold(
         containerColor = Color.White,
@@ -55,6 +57,7 @@ fun MainTabs(vm: BaruckViewModel, nav: NavController) {
                 NavigationBar(containerColor = Color.White, tonalElevation = 0.dp) {
                     val items = listOf(
                         Triple("Lavouras", R.drawable.ic_tab_farm, 0),
+                        Triple("Conversas", R.drawable.ic_chat, chatUnread),
                         Triple("Amigos", R.drawable.ic_tab_friends, requests.size),
                         Triple("Avisos", R.drawable.ic_bell, unread),
                         Triple("Perfil", 0, 0)
@@ -71,7 +74,8 @@ fun MainTabs(vm: BaruckViewModel, nav: NavController) {
                                     else AvatarImage(me?.avatar, 30.dp)
                                 }
                             },
-                            label = { Text(label, fontWeight = FontWeight.Bold) },
+                            label = { Text(label, fontWeight = FontWeight.Bold, maxLines = 1,
+                                style = MaterialTheme.typography.labelSmall) },
                             colors = NavigationBarItemDefaults.colors(
                                 indicatorColor = BaruckColors.BlueSoft,
                                 selectedTextColor = BaruckColors.BlueDark,
@@ -90,8 +94,9 @@ fun MainTabs(vm: BaruckViewModel, nav: NavController) {
         ) { t ->
             when (t) {
                 0 -> FarmsTab(vm, nav)
-                1 -> FriendsTab(vm)
-                2 -> InboxTab(vm, nav)
+                1 -> ChatsTab(vm, nav)
+                2 -> FriendsTab(vm, nav)
+                3 -> InboxTab(vm, nav)
                 else -> ProfileTab(vm, nav)
             }
         }
@@ -105,12 +110,30 @@ private fun FarmsTab(vm: BaruckViewModel, nav: NavController) {
     val me by vm.me.collectAsState()
     val farms by vm.farms.collectAsState()
     var showNew by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LazyColumn(
         Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        vm.update?.let { info ->
+            item(key = "update") {
+                BaruckCard(borderColor = BaruckColors.Green, background = BaruckColors.GreenSoft) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Mascot(R.drawable.baruck_celebrate, 76.dp)
+                        Spacer(Modifier.width(8.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text("Versão nova chegou! \uD83C\uDF89", style = MaterialTheme.typography.titleMedium,
+                                color = BaruckColors.GreenDark)
+                            Text(Updates.headline(info), style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    BaruckButton("Atualizar agora", Modifier.fillMaxWidth()) { Updates.openDownload(context) }
+                }
+            }
+        }
         item(key = "header") { me?.let { ProfileHeader(it) } }
         item(key = "title") { SectionTitle("Suas lavouras", Modifier.padding(top = 8.dp)) }
         if (farms.isEmpty()) {
@@ -255,7 +278,11 @@ private fun ProfileTab(vm: BaruckViewModel, nav: NavController) {
             }
         }
         BaruckOutlineButton("Editar perfil", Modifier.fillMaxWidth()) { nav.go("editProfile") }
+        BaruckOutlineButton("Procurar atualização", Modifier.fillMaxWidth()) { vm.checkUpdate(manual = true) }
+        vm.update?.let { BaruckButton("Baixar versão ${it.name}", Modifier.fillMaxWidth()) { Updates.openDownload(context) } }
         BaruckOutlineButton("Sair da conta", Modifier.fillMaxWidth(), color = BaruckColors.RedDark) { confirmOut = true }
+        Text("Baruck versão ${Updates.installedName(context)}", style = MaterialTheme.typography.labelSmall,
+            color = BaruckColors.InkSoft)
         Spacer(Modifier.height(16.dp))
     }
     if (confirmOut) ConfirmDialog("Sair da conta?", "Seus dados continuam salvos. É só entrar de novo com o Google.",

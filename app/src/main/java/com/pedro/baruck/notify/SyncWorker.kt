@@ -70,6 +70,22 @@ class SyncWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, 
                 }
             }
             prefs.edit().putStringSet("reminders_shown", shown).apply()
+
+            // 3) mensagens novas nos chats
+            ChatChecker.check(applicationContext, uid, db, farms.documents)
+
+            // 4) versão nova do app (avisa uma vez por versão)
+            Updates.available(applicationContext)?.let { info ->
+                if (prefs.getLong("update_notified", 0L) < info.code) {
+                    Notifier.show(
+                        applicationContext, 7001,
+                        "\uD83C\uDF89 Baruck ${info.name} chegou!",
+                        Updates.headline(info) + "\nToque para baixar a atualização.",
+                        "@baruck_celebrate", Updates.downloadIntent()
+                    )
+                    prefs.edit().putLong("update_notified", info.code).apply()
+                }
+            }
             Result.success()
         } catch (e: Exception) {
             Result.retry()

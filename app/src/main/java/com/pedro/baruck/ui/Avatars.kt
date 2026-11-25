@@ -25,4 +25,18 @@ object Avatars {
     )
 
     fun res(key: String?): Int = all.firstOrNull { it.key == key }?.res ?: R.drawable.avatar_baruck
+
+    /** Figurinhas do Baruck para o chat. */
+    val stickers = listOf(
+        "baruck_wave" to R.drawable.baruck_wave,
+        "baruck_sun" to R.drawable.baruck_sun,
+        "baruck_celebrate" to R.drawable.baruck_celebrate,
+        "baruck_love" to R.drawable.baruck_love,
+        "baruck_sit" to R.drawable.baruck_sit,
+        "baruck_rain" to R.drawable.baruck_rain,
+        "baruck_sleep" to R.drawable.baruck_sleep,
+        "baruck_sad" to R.drawable.baruck_sad
+    )
+
+    fun sticker(key: String): Int = stickers.firstOrNull { it.first == key }?.second ?: R.drawable.baruck_wave
 }

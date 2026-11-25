@@ -22,7 +22,7 @@ import com.pedro.baruck.ui.components.*
 import com.pedro.baruck.ui.theme.BaruckColors
 
 @Composable
-fun FriendsTab(vm: BaruckViewModel) {
+fun FriendsTab(vm: BaruckViewModel, nav: androidx.navigation.NavController) {
     val me by vm.me.collectAsState()
     val friends by vm.friends.collectAsState()
     val requests by vm.requests.collectAsState()
@@ -136,8 +136,26 @@ fun FriendsTab(vm: BaruckViewModel) {
         }
     }
 
+    var confirmRemove by remember { mutableStateOf<UserProfile?>(null) }
     removing?.let { f ->
+        AlertDialog(
+            onDismissRequest = { removing = null },
+            containerColor = Color.White,
+            icon = { AvatarImage(f.avatar, 64.dp) },
+            title = { Text(f.name) },
+            text = { Text("@${f.username} · ${Xp.title(Xp.level(f.xp))}" + (if (f.bio.isNotBlank()) "\n\n${f.bio}" else "")) },
+            confirmButton = {
+                TextButton(onClick = { removing = null; nav.go("chat/dm/${f.uid}") }) {
+                    Text("\uD83D\uDCAC Conversar", color = BaruckColors.BlueDark)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { removing = null; confirmRemove = f }) { Text("Remover amigo", color = BaruckColors.RedDark) }
+            }
+        )
+    }
+    confirmRemove?.let { f ->
         ConfirmDialog("Remover ${f.name}?", "Vocês deixam de ser amigos no Baruck.", "Remover",
-            onConfirm = { vm.removeFriend(f.uid) }, onDismiss = { removing = null })
+            onConfirm = { vm.removeFriend(f.uid) }, onDismiss = { confirmRemove = null })
     }
 }

@@ -67,8 +67,12 @@ jobs:
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
           cp app/build/outputs/apk/debug/app-debug.apk Baruck.apk
+          NOTES="$(git log -1 --pretty=%B | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed '/^$/N;/^\n$/D')"
+          jq -n --argjson c ${{ github.run_number }} --arg n "$NOTES" \
+            '{versionCode: $c, versionName: ("2.0." + ($c|tostring)), notes: $n}' > version.json
+          cat version.json
           gh release delete latest --yes --cleanup-tag || true
-          gh release create latest Baruck.apk \
-            --title "Baruck (build ${{ github.run_number }})" \
-            --notes "APK de teste gerado automaticamente. Baixe o Baruck.apk e instale no celular." \
+          gh release create latest Baruck.apk version.json \
+            --title "Baruck 2.0.${{ github.run_number }}" \
+            --notes "$NOTES" \
             --latest

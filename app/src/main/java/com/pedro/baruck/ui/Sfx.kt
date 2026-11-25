@@ -13,7 +13,8 @@ object Sfx {
         SUCCESS(R.raw.sfx_success, 0.8f),
         XP(R.raw.sfx_xp, 0.7f),
         LEVEL_UP(R.raw.sfx_levelup, 0.9f),
-        ERROR(R.raw.sfx_error, 0.7f)
+        ERROR(R.raw.sfx_error, 0.7f),
+        MESSAGE(R.raw.sfx_msg, 0.6f)
     }
 
     private var pool: SoundPool? = null

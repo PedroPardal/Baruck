@@ -22,8 +22,17 @@ data class Farm(
     val location: String = "",
     val ownerUid: String = "",
     val members: List<String> = emptyList(),
-    @ServerTimestamp val createdAt: Date? = null
-)
+    @ServerTimestamp val createdAt: Date? = null,
+    // grupo de conversa da lavoura
+    val lastMsgText: String = "",
+    val lastMsgFrom: String = "",
+    val lastMsgName: String = "",
+    val lastMsgAvatar: String = "",
+    val lastMsgAt: Long = 0L,
+    val chatReads: Map<String, Long> = emptyMap()
+) {
+    fun unreadFor(uid: String) = lastMsgAt > 0 && lastMsgFrom != uid && lastMsgAt > (chatReads[uid] ?: 0L)
+}
 
 /** Estufa, já com a cultura atual (safra em andamento). */
 data class Greenhouse(
@@ -129,4 +138,30 @@ data class InboxItem(
     val fromAvatar: String = "",
     @ServerTimestamp val createdAt: Date? = null,
     val read: Boolean = false
+)
+
+/** Conversa privada entre dois amigos (id = uids ordenados, unidos por "_"). */
+data class ChatThread(
+    @DocumentId val id: String = "",
+    val members: List<String> = emptyList(),
+    val lastText: String = "",
+    val lastFrom: String = "",
+    val lastName: String = "",
+    val lastAvatar: String = "",
+    val lastAt: Long = 0L,
+    val reads: Map<String, Long> = emptyMap()
+) {
+    fun other(uid: String): String? = members.firstOrNull { it != uid }
+    fun unreadFor(uid: String) = lastAt > 0 && lastFrom != uid && lastAt > (reads[uid] ?: 0L)
+}
+
+/** Mensagem de texto ou figurinha. */
+data class ChatMessage(
+    @DocumentId val id: String = "",
+    val text: String = "",
+    val sticker: String = "",
+    val fromUid: String = "",
+    val fromName: String = "",
+    val fromAvatar: String = "",
+    val at: Long = 0L
 )

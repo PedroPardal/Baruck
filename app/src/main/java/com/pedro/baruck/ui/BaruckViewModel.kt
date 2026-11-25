@@ -12,6 +12,7 @@ import com.pedro.baruck.R
 import com.pedro.baruck.auth.AuthManager
 import com.pedro.baruck.data.*
 import com.pedro.baruck.notify.SyncWorker
+import com.pedro.baruck.notify.Updates
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -57,6 +58,14 @@ class BaruckViewModel(app: Application) : AndroidViewModel(app) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val inbox = uid.flatMapLatest { if (it == null) flowOf(emptyList()) else repo.inbox(it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val threads = uid.flatMapLatest { if (it == null) flowOf(emptyList()) else repo.threads(it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /** Quantas conversas têm mensagem nova. */
+    val chatUnread: StateFlow<Int> = combine(farms, threads, uid) { f, t, me ->
+        if (me == null) 0 else f.count { it.unreadFor(me) } + t.count { it.unreadFor(me) }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     fun farm(id: String) = repo.farm(id)
     fun greenhouses(id: String) = repo.greenhouses(id)
@@ -112,9 +121,39 @@ class BaruckViewModel(app: Application) : AndroidViewModel(app) {
             }
     }
 
+    // ---------- atualizações do app ----------
+    var update by mutableStateOf<Updates.Info?>(null)
+
+    fun checkUpdate(manual: Boolean = false) = viewModelScope.launch {
+        val info = Updates.available(getApplication())
+        update = info
+        if (manual && info == null) snack = "Você já está com a versão mais nova \u2705"
+    }
+
+    // ---------- chat ----------
+    fun dmId(friendUid: String) = repo.dmId(repo.uid, friendUid)
+    fun farmMessages(farmId: String) = repo.farmMessages(farmId)
+    fun dmMessages(chatId: String) = repo.dmMessages(chatId)
+
+    fun sendFarmMessage(farmId: String, text: String, sticker: String = "") = viewModelScope.launch {
+        val p = me.value ?: return@launch
+        runCatching { repo.sendFarmMessage(farmId, text, sticker, p) }
+            .onFailure { snack = "Mensagem não enviada: ${it.message}"; Sfx.play(Sfx.S.ERROR) }
+    }
+
+    fun sendDm(friendUid: String, text: String, sticker: String = "") = viewModelScope.launch {
+        val p = me.value ?: return@launch
+        runCatching { repo.sendDm(dmId(friendUid), text, sticker, p) }
+            .onFailure { snack = "Mensagem não enviada: ${it.message}"; Sfx.play(Sfx.S.ERROR) }
+    }
+
+    fun markFarmRead(farmId: String) = viewModelScope.launch { runCatching { repo.markFarmRead(farmId) } }
+    fun markDmRead(friendUid: String) = viewModelScope.launch { runCatching { repo.markDmRead(dmId(friendUid)) } }
+
     /** Depois que o perfil está pronto: token de push e verificação periódica. */
     fun onReady() = viewModelScope.launch {
         SyncWorker.schedule(getApplication())
+        checkUpdate()
         runCatching { repo.saveToken(FirebaseMessaging.getInstance().token.await()) }
     }
 

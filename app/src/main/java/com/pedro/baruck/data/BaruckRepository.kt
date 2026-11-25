@@ -5,11 +5,14 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -328,6 +331,73 @@ class BaruckRepository(
         "fromName" to me.name, "fromAvatar" to me.avatar,
         "createdAt" to FieldValue.serverTimestamp(), "read" to false
     )
+
+    // ---------------- Chat ----------------
+
+    fun dmId(a: String, b: String) = listOf(a, b).sorted().joinToString("_")
+
+    private fun preview(text: String, sticker: String) = if (sticker.isNotBlank()) "\uD83D\uDC34 Figurinha" else text.take(80)
+
+    private fun msgMap(text: String, sticker: String, me: UserProfile, now: Long) = mapOf(
+        "text" to text.trim(), "sticker" to sticker, "fromUid" to uid, "fromName" to me.name,
+        "fromAvatar" to me.avatar, "at" to now, "createdAt" to FieldValue.serverTimestamp()
+    )
+
+    fun farmMessages(farmId: String): Flow<List<ChatMessage>> =
+        list<ChatMessage> { farmRef(farmId).collection("messages").orderBy("at", Query.Direction.DESCENDING).limit(200) }
+            .map { l -> l.distinctBy { it.id } }
+
+    suspend fun sendFarmMessage(farmId: String, text: String, sticker: String, me: UserProfile) {
+        val now = System.currentTimeMillis()
+        val msg = farmRef(farmId).collection("messages").document()
+        db.runBatch { b ->
+            b.set(msg, msgMap(text, sticker, me, now))
+            b.update(farmRef(farmId), mapOf(
+                "lastMsgText" to preview(text, sticker), "lastMsgFrom" to uid, "lastMsgName" to me.name,
+                "lastMsgAvatar" to me.avatar, "lastMsgAt" to now, "chatReads.$uid" to now))
+        }.await()
+    }
+
+    suspend fun markFarmRead(farmId: String) {
+        farmRef(farmId).update("chatReads.$uid", System.currentTimeMillis()).await()
+    }
+
+    fun threads(userId: String): Flow<List<ChatThread>> =
+        list<ChatThread> { db.collection("chats").whereArrayContains("members", userId) }
+            .map { l -> l.distinctBy { it.id }.sortedByDescending { it.lastAt } }
+
+    private suspend fun ensureChat(chatId: String) {
+        db.collection("chats").document(chatId)
+            .set(mapOf("members" to chatId.split("_")), SetOptions.merge()).await()
+    }
+
+    /** Garante que a conversa existe antes de ouvir as mensagens (senão as regras bloqueiam). */
+    fun dmMessages(chatId: String): Flow<List<ChatMessage>> = flow {
+        runCatching { ensureChat(chatId) }
+        emitAll(
+            list<ChatMessage> {
+                db.collection("chats").document(chatId).collection("messages")
+                    .orderBy("at", Query.Direction.DESCENDING).limit(200)
+            }.map { l -> l.distinctBy { it.id } }
+        )
+    }
+
+    suspend fun sendDm(chatId: String, text: String, sticker: String, me: UserProfile) {
+        val now = System.currentTimeMillis()
+        val chat = db.collection("chats").document(chatId)
+        val msg = chat.collection("messages").document()
+        db.runBatch { b ->
+            b.set(chat, mapOf(
+                "members" to chatId.split("_"), "lastText" to preview(text, sticker), "lastFrom" to uid,
+                "lastName" to me.name, "lastAvatar" to me.avatar, "lastAt" to now,
+                "reads" to mapOf(uid to now)), SetOptions.merge())
+            b.set(msg, msgMap(text, sticker, me, now))
+        }.await()
+    }
+
+    suspend fun markDmRead(chatId: String) {
+        db.collection("chats").document(chatId).update("reads.$uid", System.currentTimeMillis()).await()
+    }
 
     // ---------------- helpers ----------------
 

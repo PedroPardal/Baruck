@@ -46,6 +46,7 @@ fun FarmScreen(vm: BaruckViewModel, nav: NavController, farmId: String) {
         containerColor = Color.White,
         topBar = {
             BaruckTopBar(farm?.name ?: "Lavoura", onBack = { nav.back() }) {
+                TopIcon(R.drawable.ic_chat, "Conversa") { nav.go("chat/farm/$farmId") }
                 TopIcon(R.drawable.ic_bell, "Avisos") { nav.go("notices/$farmId") }
                 TopIcon(R.drawable.ic_tab_friends, "Equipe") { nav.go("members/$farmId") }
             }

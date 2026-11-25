@@ -18,7 +18,7 @@ import com.pedro.baruck.ui.Avatars
 object Notifier {
     const val CHANNEL = "baruck_alerts"
 
-    fun show(context: Context, id: Int, title: String, body: String, avatarKey: String? = null) {
+    fun show(context: Context, id: Int, title: String, body: String, avatarKey: String? = null, intent: Intent? = null) {
         if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED
@@ -26,11 +26,12 @@ object Notifier {
 
         val open = PendingIntent.getActivity(
             context, id,
-            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            intent ?: Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val large = runCatching {
-            ContextCompat.getDrawable(context, Avatars.res(avatarKey ?: "baruck"))?.toBitmap(192, 192)
+            val res = if (avatarKey?.startsWith("@") == true) Avatars.sticker(avatarKey.drop(1)) else Avatars.res(avatarKey ?: "baruck")
+            ContextCompat.getDrawable(context, res)?.toBitmap(192, 192)
         }.getOrNull()
 
         val n = NotificationCompat.Builder(context, CHANNEL)

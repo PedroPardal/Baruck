@@ -122,5 +122,8 @@ private fun MainNav(vm: BaruckViewModel) {
         composable("members/{id}") { MembersScreen(vm, nav, it.arguments?.getString("id").orEmpty()) }
         composable("notices/{id}") { NoticesScreen(vm, nav, it.arguments?.getString("id").orEmpty()) }
         composable("editProfile") { EditProfileScreen(vm, nav) }
+        composable("chat/{kind}/{id}") {
+            ChatScreen(vm, nav, it.arguments?.getString("kind").orEmpty(), it.arguments?.getString("id").orEmpty())
+        }
     }
 }
