@@ -52,14 +52,14 @@ val Poppins = FontFamily(
 )
 
 private fun typography() = Typography(
-    displaySmall = TextStyle(Poppins, fontWeight = FontWeight.Bold, fontSize = 28.sp),
-    headlineMedium = TextStyle(Poppins, fontWeight = FontWeight.Bold, fontSize = 22.sp),
-    titleLarge = TextStyle(Poppins, fontWeight = FontWeight.Bold, fontSize = 19.sp),
-    titleMedium = TextStyle(Poppins, fontWeight = FontWeight.Bold, fontSize = 16.sp),
-    bodyLarge = TextStyle(Poppins, fontWeight = FontWeight.Normal, fontSize = 16.sp),
-    bodyMedium = TextStyle(Poppins, fontWeight = FontWeight.Normal, fontSize = 14.sp),
-    labelLarge = TextStyle(Poppins, fontWeight = FontWeight.Bold, fontSize = 15.sp, letterSpacing = 0.5.sp),
-    labelSmall = TextStyle(Poppins, fontWeight = FontWeight.Medium, fontSize = 12.sp)
+    displaySmall = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 28.sp),
+    headlineMedium = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 22.sp),
+    titleLarge = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 19.sp),
+    titleMedium = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 16.sp),
+    bodyLarge = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Normal, fontSize = 16.sp),
+    bodyMedium = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Normal, fontSize = 14.sp),
+    labelLarge = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 15.sp, letterSpacing = 0.5.sp),
+    labelSmall = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Medium, fontSize = 12.sp)
 )
 
 private val shapes = Shapes(
