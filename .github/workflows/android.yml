@@ -13,8 +13,6 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
 
       - name: Restaurar google-services.json
         env: { GOOGLE_SERVICES_JSON: '${{ secrets.GOOGLE_SERVICES_JSON }}' }
@@ -37,11 +35,25 @@ jobs:
               -storepass baruck123 -keypass baruck123 -alias baruck \
               -keyalg RSA -keysize 2048 -validity 10000 \
               -dname "CN=Baruck Debug, O=Baruck, C=BR"
-            echo "::warning::Keystore nova gerada — o login Google so funciona registrando o novo SHA-1 no Firebase."
+            echo "::warning::Keystore nova gerada."
           fi
+
+      - name: Preparar Android SDK (aceitar licencas)
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          echo "SDK em: $SDK"
+          mkdir -p "$SDK/licenses"
+          printf '%s\n%s\n%s\n' \
+            8933bad161af4178b1185d1a37fbf41ea5269c55 \
+            d56f5187479451eabf01fb78af6dfcb131a6481e \
+            24333f8a63b6825ea9c5514f83c2829b004d1fee \
+            > "$SDK/licenses/android-sdk-license"
+          SDKMGR="$(find "$SDK" -name sdkmanager -type f 2>/dev/null | head -1)"
+          if [ -n "$SDKMGR" ]; then yes | "$SDKMGR" --licenses >/dev/null 2>&1 || true; fi
 
       - name: Build debug APK
         run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon --stacktrace
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
