@@ -27,6 +27,7 @@ class BaruckApp : Application() {
         Thread.setDefaultUncaughtExceptionHandler { thread, error ->
             runCatching {
                 File(filesDir, CRASH_FILE).writeText(
+                    "${versionTag(this)}\n" +
                     "Aparelho: ${Build.MANUFACTURER} ${Build.MODEL} " +
                         "(Android ${Build.VERSION.RELEASE}, SDK ${Build.VERSION.SDK_INT})\n\n" +
                         error.stackTraceToString()
@@ -38,5 +39,11 @@ class BaruckApp : Application() {
 
     companion object {
         const val CRASH_FILE = "last_crash.txt"
+
+        @Suppress("DEPRECATION")
+        fun versionTag(ctx: android.content.Context): String {
+            val info = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
+            return "Versão: ${info.versionName} (build ${info.versionCode})"
+        }
     }
 }

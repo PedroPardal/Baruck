@@ -21,8 +21,9 @@ android {
         applicationId = "com.pedro.baruck"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        // no GitHub Actions cada build ganha um número novo
+        versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        versionName = "2.0.${System.getenv("GITHUB_RUN_NUMBER") ?: "0"}"
         vectorDrawables { useSupportLibrary = true }
     }
 

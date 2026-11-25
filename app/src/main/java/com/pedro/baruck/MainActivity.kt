@@ -46,6 +46,10 @@ class MainActivity : ComponentActivity() {
         )
         Sfx.init(this)
         val crashFile = File(filesDir, BaruckApp.CRASH_FILE)
+        // relatório de uma versão anterior não interessa mais
+        runCatching {
+            if (crashFile.exists() && crashFile.readLines().firstOrNull() != BaruckApp.versionTag(this)) crashFile.delete()
+        }
         setContent {
             BaruckTheme {
                 var crash by remember { mutableStateOf(crashFile.takeIf { it.exists() }?.readText()) }
