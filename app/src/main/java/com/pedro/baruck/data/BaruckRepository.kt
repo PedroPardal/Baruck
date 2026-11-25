@@ -149,6 +149,7 @@ class BaruckRepository(
 
     suspend fun sendFriendRequest(target: UserProfile) {
         val me = auth.currentUser!!
+        require(target.uid != me.uid) { "Não dá para adicionar você mesmo" }
         db.collection("users").document(target.uid)
             .collection("friendRequests").document(me.uid)
             .set(

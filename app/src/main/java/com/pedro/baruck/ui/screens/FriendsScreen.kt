@@ -82,7 +82,7 @@ fun FriendsScreen(vm: BaruckViewModel, nav: NavController) {
 
             if (requests.isNotEmpty()) {
                 item { SectionTitle("Pedidos recebidos") }
-                items(requests, key = { it.id }) { req ->
+                items(requests.distinctBy { it.id }, key = { "req_" + it.id }) { req ->
                     BaruckCard {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.PersonAdd, null, tint = BaruckColors.Blue,
@@ -111,7 +111,7 @@ fun FriendsScreen(vm: BaruckViewModel, nav: NavController) {
                         color = BaruckColors.InkSoft, style = MaterialTheme.typography.bodyMedium)
                 }
             } else {
-                items(friends, key = { it.uid }) { f ->
+                items(friends.distinctBy { it.uid }, key = { "friend_" + it.uid }) { f ->
                     BaruckCard {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.AccountCircle, null, tint = BaruckColors.Green,

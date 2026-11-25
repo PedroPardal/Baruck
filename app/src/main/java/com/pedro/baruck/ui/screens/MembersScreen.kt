@@ -43,7 +43,7 @@ fun MembersScreen(vm: BaruckViewModel, nav: NavController, farmId: String) {
             contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
             item { SectionTitle("Quem gerencia") }
-            items(memberUids, key = { it }) { uid ->
+            items(memberUids.distinct(), key = { "member_$it" }) { uid ->
                 val name = farm?.memberNames?.get(uid) ?: "Produtor"
                 BaruckCard {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -78,7 +78,7 @@ fun MembersScreen(vm: BaruckViewModel, nav: NavController, farmId: String) {
                     )
                 }
             } else {
-                items(available, key = { it.uid }) { f ->
+                items(available.distinctBy { it.uid }, key = { "avail_" + it.uid }) { f ->
                     FriendAddRow(f) { vm.addMemberToFarm(farmId, it) }
                 }
             }
