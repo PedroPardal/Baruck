@@ -28,6 +28,12 @@ class MainActivity : ComponentActivity() {
         maybeAskNotifications()
         setContent {
             BaruckTheme {
+                val crashFile = remember { java.io.File(filesDir, BaruckApp.CRASH_FILE) }
+                var crash by remember { mutableStateOf(crashFile.takeIf { it.exists() }?.readText()) }
+                val shownCrash = crash
+                if (shownCrash != null) {
+                    CrashScreen(shownCrash) { crashFile.delete(); crash = null }
+                } else {
                 val vm: BaruckViewModel = viewModel()
                 var loggedIn by remember {
                     mutableStateOf(FirebaseAuth.getInstance().currentUser != null)
@@ -62,6 +68,7 @@ class MainActivity : ComponentActivity() {
                         composable("friends") { FriendsScreen(vm, nav) }
                         composable("inbox") { InboxScreen(vm, nav) }
                     }
+                }
                 }
             }
         }

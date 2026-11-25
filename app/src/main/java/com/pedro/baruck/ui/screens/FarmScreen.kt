@@ -23,9 +23,9 @@ import com.pedro.baruck.ui.theme.BaruckColors
 fun FarmScreen(vm: BaruckViewModel, nav: NavController, farmId: String) {
     val farms by vm.farms.collectAsState()
     val farm = farms.firstOrNull { it.id == farmId }
-    val greenhouses by vm.greenhouses(farmId).collectAsState(emptyList())
-    val crops by vm.crops(farmId).collectAsState(emptyList())
-    val harvests by vm.harvests(farmId).collectAsState(emptyList())
+    val greenhouses by remember(farmId) { vm.greenhouses(farmId) }.collectAsState(emptyList())
+    val crops by remember(farmId) { vm.crops(farmId) }.collectAsState(emptyList())
+    val harvests by remember(farmId) { vm.harvests(farmId) }.collectAsState(emptyList())
 
     var tab by remember { mutableStateOf(0) }
     val tabs = listOf("Estufas", "Safras", "Colheitas")

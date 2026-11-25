@@ -21,9 +21,9 @@ import com.pedro.baruck.ui.theme.BaruckColors
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CropScreen(vm: BaruckViewModel, nav: NavController, farmId: String, cropId: String) {
-    val crops by vm.crops(farmId).collectAsState(emptyList())
+    val crops by remember(farmId) { vm.crops(farmId) }.collectAsState(emptyList())
     val crop = crops.firstOrNull { it.id == cropId }
-    val harvests by vm.harvestsOfCrop(farmId, cropId).collectAsState(emptyList())
+    val harvests by remember(farmId, cropId) { vm.harvestsOfCrop(farmId, cropId) }.collectAsState(emptyList())
     var showHarvest by remember { mutableStateOf(false) }
 
     Scaffold(

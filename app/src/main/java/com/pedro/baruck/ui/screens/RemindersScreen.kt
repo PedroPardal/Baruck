@@ -26,7 +26,7 @@ import java.util.Date
 fun RemindersScreen(vm: BaruckViewModel, nav: NavController, farmId: String) {
     val farms by vm.farms.collectAsState()
     val farm = farms.firstOrNull { it.id == farmId }
-    val reminders by vm.reminders(farmId).collectAsState(emptyList())
+    val reminders by remember(farmId) { vm.reminders(farmId) }.collectAsState(emptyList())
     var show by remember { mutableStateOf(false) }
 
     Scaffold(

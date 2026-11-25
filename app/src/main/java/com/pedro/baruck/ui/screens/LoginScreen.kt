@@ -30,7 +30,7 @@ fun LoginScreen(webClientId: String, onLoggedIn: () -> Unit) {
     var error by remember { mutableStateOf<String?>(null) }
 
     Column(
-        Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+        Modifier.fillMaxSize().systemBarsPadding().verticalScroll(rememberScrollState())
             .padding(28.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

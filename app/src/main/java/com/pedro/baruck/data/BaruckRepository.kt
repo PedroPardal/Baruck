@@ -45,7 +45,7 @@ class BaruckRepository(
         val reg = db.collection("farms")
             .whereArrayContains("members", uid)
             .addSnapshotListener { snap, _ ->
-                trySend(snap?.toObjects(Farm::class.java) ?: emptyList())
+                trySend(runCatching { snap?.toObjects(Farm::class.java) }.getOrNull() ?: emptyList())
             }
         awaitClose { reg.remove() }
     }
@@ -68,7 +68,7 @@ class BaruckRepository(
 
     // ---------- Estufas ----------
     fun greenhouses(farmId: String): Flow<List<Greenhouse>> =
-        collectionFlow(farmPath(farmId).collection("greenhouses").orderBy("name"))
+        collectionFlow({ farmPath(farmId).collection("greenhouses").orderBy("name") })
 
     suspend fun addGreenhouse(farmId: String, name: String, areaM2: Double, note: String) {
         val doc = farmPath(farmId).collection("greenhouses").document()
@@ -81,12 +81,10 @@ class BaruckRepository(
 
     // ---------- Safras ----------
     fun crops(farmId: String): Flow<List<Crop>> =
-        collectionFlow(farmPath(farmId).collection("crops"))
+        collectionFlow({ farmPath(farmId).collection("crops") })
 
     fun cropsOfGreenhouse(farmId: String, ghId: String): Flow<List<Crop>> =
-        collectionFlow(
-            farmPath(farmId).collection("crops").whereEqualTo("greenhouseId", ghId)
-        )
+        collectionFlow({ farmPath(farmId).collection("crops").whereEqualTo("greenhouseId", ghId) })
 
     suspend fun addCrop(farmId: String, crop: Crop) {
         val doc = farmPath(farmId).collection("crops").document()
@@ -103,14 +101,10 @@ class BaruckRepository(
 
     // ---------- Colheitas ----------
     fun harvests(farmId: String): Flow<List<Harvest>> =
-        collectionFlow(
-            farmPath(farmId).collection("harvests").orderBy("date", Query.Direction.DESCENDING)
-        )
+        collectionFlow({ farmPath(farmId).collection("harvests").orderBy("date", Query.Direction.DESCENDING) })
 
     fun harvestsOfCrop(farmId: String, cropId: String): Flow<List<Harvest>> =
-        collectionFlow(
-            farmPath(farmId).collection("harvests").whereEqualTo("cropId", cropId)
-        )
+        collectionFlow({ farmPath(farmId).collection("harvests").whereEqualTo("cropId", cropId) })
 
     suspend fun addHarvest(farmId: String, harvest: Harvest) {
         val doc = farmPath(farmId).collection("harvests").document()
@@ -123,9 +117,7 @@ class BaruckRepository(
 
     // ---------- Lembretes / notificações ----------
     fun reminders(farmId: String): Flow<List<Reminder>> =
-        collectionFlow(
-            farmPath(farmId).collection("reminders").orderBy("dueAt")
-        )
+        collectionFlow({ farmPath(farmId).collection("reminders").orderBy("dueAt") })
 
     suspend fun addReminder(farmId: String, reminder: Reminder) {
         val doc = farmPath(farmId).collection("reminders").document()
@@ -143,10 +135,10 @@ class BaruckRepository(
 
     // ---------- Amigos ----------
     fun friends(): Flow<List<UserProfile>> =
-        collectionFlow(db.collection("users").document(uid).collection("friends"))
+        collectionFlow({ me().collection("friends") })
 
     fun friendRequests(): Flow<List<FriendRequest>> =
-        collectionFlow(db.collection("users").document(uid).collection("friendRequests"))
+        collectionFlow({ me().collection("friendRequests") })
 
     suspend fun findUserByEmail(email: String): UserProfile? {
         val snap = db.collection("users")
@@ -216,10 +208,8 @@ class BaruckRepository(
 
     // ---------- Inbox ----------
     fun inbox(): Flow<List<InboxItem>> =
-        collectionFlow(
-            db.collection("users").document(uid).collection("inbox")
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-        )
+        collectionFlow({ me().collection("inbox")
+                .orderBy("createdAt", Query.Direction.DESCENDING) })
 
     suspend fun markInboxRead(itemId: String) {
         db.collection("users").document(uid).collection("inbox")
@@ -227,12 +217,21 @@ class BaruckRepository(
     }
 
     // ---------- helpers ----------
+    private fun me() = db.collection("users").document(uid.ifBlank { error("sem login") })
+
     private fun farmPath(farmId: String) = db.collection("farms").document(farmId)
 
-    private inline fun <reified T : Any> collectionFlow(query: Query): Flow<List<T>> = callbackFlow {
-        val reg = query.addSnapshotListener { snap, _ ->
-            trySend(snap?.toObjects(T::class.java) ?: emptyList())
+    /** Monta a consulta só na hora de observar; se falhar (ex.: sem login), emite lista vazia. */
+    private inline fun <reified T : Any> collectionFlow(crossinline build: () -> Query): Flow<List<T>> = callbackFlow {
+        val query = runCatching { build() }.getOrNull()
+        if (query == null) {
+            trySend(emptyList())
+            awaitClose { }
+        } else {
+            val reg = query.addSnapshotListener { snap, _ ->
+                trySend(runCatching { snap?.toObjects(T::class.java) }.getOrNull() ?: emptyList())
+            }
+            awaitClose { reg.remove() }
         }
-        awaitClose { reg.remove() }
     }
 }

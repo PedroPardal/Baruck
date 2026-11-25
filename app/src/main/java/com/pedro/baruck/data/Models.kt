@@ -1,6 +1,7 @@
 package com.pedro.baruck.data
 
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.ServerTimestamp
 import java.util.Date
 
@@ -67,8 +68,8 @@ data class Harvest(
     val note: String = "",
     val createdBy: String = ""
 ) {
-    val totalBoxes: Int get() = boxesGrande + boxesMedia + boxesMiuda
-    val revenue: Double
+    @get:Exclude val totalBoxes: Int get() = boxesGrande + boxesMedia + boxesMiuda
+    @get:Exclude val revenue: Double
         get() = boxesGrande * priceGrande + boxesMedia * priceMedia + boxesMiuda * priceMiuda
 }
 
