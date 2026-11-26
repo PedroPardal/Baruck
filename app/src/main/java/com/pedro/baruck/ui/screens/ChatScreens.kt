@@ -232,7 +232,7 @@ fun ChatScreen(vm: BaruckViewModel, nav: NavController, kind: String, id: String
                 }
                 Row(Modifier.padding(horizontal = 8.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { Sfx.play(Sfx.S.TAP); showStickers = !showStickers }) {
-                        Image(painterResource(R.drawable.avatar_baruck), "Figurinhas", Modifier.size(36.dp))
+                        Image(painterResource(R.drawable.baruck_wave), "Figurinhas", Modifier.size(40.dp))
                     }
                     OutlinedTextField(
                         value = text, onValueChange = { text = it.take(1000) },
