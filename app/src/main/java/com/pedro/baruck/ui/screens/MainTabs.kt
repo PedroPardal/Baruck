@@ -156,7 +156,7 @@ private fun FarmsTab(vm: BaruckViewModel, nav: NavController) {
 private fun FarmCard(f: Farm, isOwner: Boolean, modifier: Modifier, onClick: () -> Unit) {
     BaruckCard(modifier, onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(58.dp).clip(RoundedCornerShape(16.dp)).background(BaruckColors.RedSoft),
+            Box(Modifier.size(58.dp).clip(RoundedCornerShape(8.dp)).background(BaruckColors.RedSoft),
                 contentAlignment = Alignment.Center) {
                 Image(painterResource(R.drawable.ic_tab_farm), null, Modifier.size(40.dp))
             }

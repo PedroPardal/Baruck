@@ -70,7 +70,7 @@ fun GreenhouseScreen(vm: BaruckViewModel, nav: NavController, farmId: String, gh
                 item(key = "head") {
                     BaruckCard {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(Modifier.size(76.dp).clip(RoundedCornerShape(20.dp)).background(BaruckColors.GreenSoft),
+                            Box(Modifier.size(76.dp).clip(RoundedCornerShape(10.dp)).background(BaruckColors.GreenSoft),
                                 contentAlignment = Alignment.Center) {
                                 Text(cropEmoji(gh.cropKey), fontSize = 42.sp, modifier = Modifier.bob(4.dp))
                             }

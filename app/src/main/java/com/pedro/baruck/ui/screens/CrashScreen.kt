@@ -45,7 +45,7 @@ fun CrashScreen(report: String, onContinue: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         SelectionContainer(
             Modifier.weight(1f).fillMaxWidth()
-                .clip(RoundedCornerShape(14.dp)).background(Color(0xFFF2F2F2))
+                .clip(RoundedCornerShape(8.dp)).background(Color(0xFFF2F2F2))
                 .verticalScroll(rememberScrollState()).padding(12.dp)
         ) {
             Text(report, color = BaruckColors.Ink, fontFamily = FontFamily.Monospace, fontSize = 11.sp)

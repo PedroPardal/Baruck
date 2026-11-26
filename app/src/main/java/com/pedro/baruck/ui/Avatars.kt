@@ -2,29 +2,32 @@ package com.pedro.baruck.ui
 
 import com.pedro.baruck.R
 
-/** Animaizinhos disponíveis como foto de perfil. */
+/** Ícones de perfil (coisas do campo). */
 object Avatars {
     data class Avatar(val key: String, val name: String, val res: Int)
 
+    const val DEFAULT = "trator"
+
     val all = listOf(
-        Avatar("baruck", "Baruck", R.drawable.avatar_baruck),
-        Avatar("vaca", "Vaca", R.drawable.avatar_vaca),
-        Avatar("porco", "Porco", R.drawable.avatar_porco),
-        Avatar("galinha", "Galinha", R.drawable.avatar_galinha),
-        Avatar("ovelha", "Ovelha", R.drawable.avatar_ovelha),
-        Avatar("coelho", "Coelho", R.drawable.avatar_coelho),
-        Avatar("gato", "Gato", R.drawable.avatar_gato),
-        Avatar("cachorro", "Cachorro", R.drawable.avatar_cachorro),
-        Avatar("pato", "Pato", R.drawable.avatar_pato),
-        Avatar("sapo", "Sapo", R.drawable.avatar_sapo),
-        Avatar("raposa", "Raposa", R.drawable.avatar_raposa),
-        Avatar("urso", "Urso", R.drawable.avatar_urso),
-        Avatar("panda", "Panda", R.drawable.avatar_panda),
-        Avatar("cabra", "Cabra", R.drawable.avatar_cabra),
-        Avatar("coruja", "Coruja", R.drawable.avatar_coruja)
+        Avatar("trator", "Trator", R.drawable.avatar_trator),
+        Avatar("caminhao", "Caminhão", R.drawable.avatar_caminhao),
+        Avatar("tomate", "Tomate", R.drawable.avatar_tomate),
+        Avatar("milho", "Milho", R.drawable.avatar_milho),
+        Avatar("alface", "Alface", R.drawable.avatar_alface),
+        Avatar("pimentao", "Pimentão", R.drawable.avatar_pimentao),
+        Avatar("cenoura", "Cenoura", R.drawable.avatar_cenoura),
+        Avatar("morango", "Morango", R.drawable.avatar_morango),
+        Avatar("abobora", "Abóbora", R.drawable.avatar_abobora),
+        Avatar("estufa", "Estufa", R.drawable.avatar_estufa),
+        Avatar("celeiro", "Celeiro", R.drawable.avatar_celeiro),
+        Avatar("caixa", "Caixa de colheita", R.drawable.avatar_caixa),
+        Avatar("regador", "Regador", R.drawable.avatar_regador),
+        Avatar("chapeu", "Chapéu de palha", R.drawable.avatar_chapeu),
+        Avatar("broto", "Broto", R.drawable.avatar_broto)
     )
 
-    fun res(key: String?): Int = all.firstOrNull { it.key == key }?.res ?: R.drawable.avatar_baruck
+    /** Chaves antigas (bichinhos) caem no padrão. */
+    fun res(key: String?): Int = all.firstOrNull { it.key == key }?.res ?: R.drawable.avatar_trator
 
     /** Figurinhas do Baruck para o chat. */
     val stickers = listOf(

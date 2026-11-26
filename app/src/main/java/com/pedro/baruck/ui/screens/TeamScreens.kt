@@ -238,7 +238,7 @@ fun EditProfileScreen(vm: BaruckViewModel, nav: NavController) {
             Text("@" + p.username, color = BaruckColors.InkSoft)
             BaruckField(name, { name = it.take(40) }, "Nome")
             BaruckField(bio, { bio = it.take(120) }, "Bio", singleLine = false, supporting = "${bio.length}/120")
-            SectionTitle("Bichinho do perfil", Modifier.fillMaxWidth())
+            SectionTitle("Ícone do perfil", Modifier.fillMaxWidth())
             AvatarPicker(avatar) { avatar = it }
         }
     }

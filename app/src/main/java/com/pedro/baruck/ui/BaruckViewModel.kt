@@ -75,7 +75,7 @@ class BaruckViewModel(app: Application) : AndroidViewModel(app) {
     fun profiles(ids: List<String>) = repo.profiles(ids)
 
     // ---------- rascunho do perfil (antes do login) ----------
-    var draftAvatar by mutableStateOf("baruck")
+    var draftAvatar by mutableStateOf(Avatars.DEFAULT)
     var draftName by mutableStateOf("")
     var draftUsername by mutableStateOf("")
     var draftBio by mutableStateOf("")
@@ -159,7 +159,7 @@ class BaruckViewModel(app: Application) : AndroidViewModel(app) {
 
     fun signOut() {
         repo.signOut()
-        draftName = ""; draftUsername = ""; draftBio = ""; draftAvatar = "baruck"
+        draftName = ""; draftUsername = ""; draftBio = ""; draftAvatar = Avatars.DEFAULT
         nameStatus = NameStatus.IDLE
     }
 

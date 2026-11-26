@@ -69,15 +69,15 @@ fun BaruckButton(
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val depth = 4.dp
+    val depth = 3.dp
     val offset by animateDpAsState(if (pressed && enabled) depth else 0.dp, tween(60), label = "press")
     val face = if (enabled) color else Color(0xFFE5E5E5)
     val base = if (enabled) shadow else Color(0xFFCECECE)
-    val shape = RoundedCornerShape(16.dp)
-    Box(modifier.height(54.dp)) {
+    val shape = RoundedCornerShape(6.dp)
+    Box(modifier.height(52.dp)) {
         Box(Modifier.matchParentSize().padding(top = depth).clip(shape).background(base))
         Box(
-            Modifier.fillMaxWidth().height(50.dp).offset(y = offset).clip(shape).background(face)
+            Modifier.fillMaxWidth().height(48.dp).offset(y = offset).clip(shape).background(face)
                 .then(if (border != null && enabled) Modifier.border(2.dp, border, shape) else Modifier)
                 .clickable(interaction, null, enabled) { Sfx.play(Sfx.S.TAP); onClick() },
             contentAlignment = Alignment.Center
@@ -120,9 +120,9 @@ fun RoundButton(label: String, color: Color, shadow: Color, size: Dp = 46.dp, on
     val pressed by interaction.collectIsPressedAsState()
     val off by animateDpAsState(if (pressed) 3.dp else 0.dp, tween(50), label = "rb")
     Box(Modifier.size(size, size + 3.dp)) {
-        Box(Modifier.size(size).offset(y = 3.dp).clip(CircleShape).background(shadow))
+        Box(Modifier.size(size).offset(y = 3.dp).clip(RoundedCornerShape(8.dp)).background(shadow))
         Box(
-            Modifier.size(size).offset(y = off).clip(CircleShape).background(color)
+            Modifier.size(size).offset(y = off).clip(RoundedCornerShape(8.dp)).background(color)
                 .clickable(interaction, null) { Sfx.play(Sfx.S.TAP); onClick() },
             contentAlignment = Alignment.Center
         ) { Text(label, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold) }
@@ -146,9 +146,9 @@ fun BaruckCard(
     Column(
         modifier.fillMaxWidth()
             .graphicsLayer { scaleX = scale; scaleY = scale }
-            .clip(RoundedCornerShape(18.dp)).background(borderColor)
-            .padding(start = 2.dp, top = 2.dp, end = 2.dp, bottom = 4.dp)
-            .clip(RoundedCornerShape(16.dp)).background(background)
+            .clip(RoundedCornerShape(8.dp)).background(borderColor)
+            .padding(start = 1.5.dp, top = 1.5.dp, end = 1.5.dp, bottom = 3.dp)
+            .clip(RoundedCornerShape(7.dp)).background(background)
             .then(
                 if (onClick != null) Modifier.clickable(interaction, null) { Sfx.play(Sfx.S.TAP); onClick() }
                 else Modifier
@@ -160,7 +160,7 @@ fun BaruckCard(
 
 @Composable
 fun Pill(text: String, color: Color, bg: Color) {
-    Box(Modifier.clip(CircleShape).background(bg).padding(horizontal = 10.dp, vertical = 4.dp)) {
+    Box(Modifier.clip(RoundedCornerShape(4.dp)).background(bg).padding(horizontal = 8.dp, vertical = 3.dp)) {
         Text(text, color = color, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
     }
 }
@@ -180,8 +180,8 @@ fun SegmentedTabs(options: List<String>, selected: Int, onSelect: (Int) -> Unit)
             val on = i == selected
             val bg by animateColorAsState(if (on) BaruckColors.BlueSoft else Color.White, tween(200), label = "tabbg")
             Box(
-                Modifier.weight(1f).height(44.dp).clip(RoundedCornerShape(14.dp)).background(bg)
-                    .border(2.dp, if (on) BaruckColors.Blue else BaruckColors.Line, RoundedCornerShape(14.dp))
+                Modifier.weight(1f).height(44.dp).clip(RoundedCornerShape(8.dp)).background(bg)
+                    .border(2.dp, if (on) BaruckColors.Blue else BaruckColors.Line, RoundedCornerShape(8.dp))
                     .clickable { if (!on) { Sfx.play(Sfx.S.TAP); onSelect(i) } },
                 contentAlignment = Alignment.Center
             ) {
@@ -196,9 +196,9 @@ fun SegmentedTabs(options: List<String>, selected: Int, onSelect: (Int) -> Unit)
 @Composable
 fun ChoiceChip(text: String, selected: Boolean, onClick: () -> Unit) {
     Box(
-        Modifier.clip(RoundedCornerShape(12.dp))
+        Modifier.clip(RoundedCornerShape(6.dp))
             .background(if (selected) BaruckColors.BlueSoft else Color.White)
-            .border(2.dp, if (selected) BaruckColors.Blue else BaruckColors.Line, RoundedCornerShape(12.dp))
+            .border(2.dp, if (selected) BaruckColors.Blue else BaruckColors.Line, RoundedCornerShape(6.dp))
             .clickable { Sfx.play(Sfx.S.TAP); onClick() }
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
@@ -230,7 +230,7 @@ fun BaruckField(
         prefix = prefix?.let { { Text(it, color = BaruckColors.InkSoft) } },
         supportingText = supporting?.let { { Text(it) } },
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(8.dp),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = BaruckColors.Blue,
@@ -297,7 +297,7 @@ fun Stepper(label: String, value: Int, color: Color, shadow: Color, onChange: (I
             singleLine = true,
             textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(8.dp),
             modifier = Modifier.width(84.dp).padding(horizontal = 8.dp)
         )
         RoundButton("+", color, shadow) { onChange(value + 1) }
@@ -323,8 +323,8 @@ fun Mascot(res: Int, size: Dp, modifier: Modifier = Modifier, bobbing: Boolean =
 @Composable
 fun SpeechBubble(text: String, modifier: Modifier = Modifier) {
     Box(
-        modifier.clip(RoundedCornerShape(18.dp)).background(Color.White)
-            .border(2.dp, BaruckColors.Line, RoundedCornerShape(18.dp)).padding(14.dp)
+        modifier.clip(RoundedCornerShape(10.dp)).background(Color.White)
+            .border(2.dp, BaruckColors.Line, RoundedCornerShape(10.dp)).padding(14.dp)
     ) { Text(text, style = MaterialTheme.typography.bodyLarge, color = BaruckColors.Ink) }
 }
 
@@ -352,8 +352,8 @@ fun EmptyState(res: Int, title: String, subtitle: String) {
 fun AvatarImage(key: String?, size: Dp, modifier: Modifier = Modifier, ring: Color? = null) {
     Image(
         painterResource(Avatars.res(key)), null,
-        modifier.size(size).clip(CircleShape)
-            .then(if (ring != null) Modifier.border(3.dp, ring, CircleShape) else Modifier)
+        modifier.size(size).clip(RoundedCornerShape(14))
+            .then(if (ring != null) Modifier.border(3.dp, ring, RoundedCornerShape(14)) else Modifier)
     )
 }
 
@@ -361,14 +361,14 @@ fun AvatarImage(key: String?, size: Dp, modifier: Modifier = Modifier, ring: Col
 @Composable
 fun XpBar(xp: Int, modifier: Modifier = Modifier, height: Dp = 16.dp) {
     val p by animateFloatAsState(Xp.progress(xp), tween(900, easing = FastOutSlowInEasing), label = "xp")
-    Box(modifier.fillMaxWidth().height(height).clip(CircleShape).background(BaruckColors.Line)) {
+    Box(modifier.fillMaxWidth().height(height).clip(RoundedCornerShape(4.dp)).background(BaruckColors.Line)) {
         Box(
-            Modifier.fillMaxWidth(p).fillMaxHeight().clip(CircleShape)
+            Modifier.fillMaxWidth(p).fillMaxHeight().clip(RoundedCornerShape(4.dp))
                 .background(Brush.horizontalGradient(listOf(BaruckColors.Yellow, BaruckColors.Orange)))
         ) {
             Box(
                 Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 3.dp).height(3.dp)
-                    .clip(CircleShape).background(Color.White.copy(alpha = 0.35f))
+                    .clip(RoundedCornerShape(2.dp)).background(Color.White.copy(alpha = 0.35f))
             )
         }
     }
@@ -458,8 +458,8 @@ fun XpToast(amount: Int?, modifier: Modifier = Modifier, onDone: () -> Unit) {
         enter = slideInVertically { -it } + fadeIn(), exit = slideOutVertically { -it } + fadeOut()
     ) {
         Row(
-            Modifier.clip(CircleShape).background(BaruckColors.Yellow)
-                .border(2.dp, BaruckColors.YellowDark, CircleShape)
+            Modifier.clip(RoundedCornerShape(6.dp)).background(BaruckColors.Yellow)
+                .border(2.dp, BaruckColors.YellowDark, RoundedCornerShape(6.dp))
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -502,7 +502,7 @@ fun FormSheet(title: String, onDismiss: () -> Unit, footer: @Composable () -> Un
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Column(
             Modifier.fillMaxWidth().fillMaxHeight(0.92f).padding(horizontal = 12.dp)
-                .clip(RoundedCornerShape(24.dp)).background(Color.White)
+                .clip(RoundedCornerShape(12.dp)).background(Color.White)
         ) {
             Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)

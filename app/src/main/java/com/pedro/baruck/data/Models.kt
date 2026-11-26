@@ -11,7 +11,7 @@ data class UserProfile(
     val name: String = "",
     val username: String = "",
     val bio: String = "",
-    val avatar: String = "baruck",
+    val avatar: String = "trator",
     val xp: Int = 0
 )
 
@@ -123,7 +123,7 @@ data class FriendRequest(
     val fromUid: String = "",
     val fromName: String = "",
     val fromUsername: String = "",
-    val fromAvatar: String = "baruck",
+    val fromAvatar: String = "trator",
     @ServerTimestamp val createdAt: Date? = null
 )
 

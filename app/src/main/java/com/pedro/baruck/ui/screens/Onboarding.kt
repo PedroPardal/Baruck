@@ -14,6 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -58,8 +59,8 @@ fun OnboardingScreen(vm: BaruckViewModel, signedIn: Boolean) {
                     Icon(Icons.Default.Close, "Voltar", tint = if (step > first) BaruckColors.InkSoft else Color.Transparent)
                 }
                 val p by animateFloatAsState(step / 3f, tween(500), label = "onb")
-                Box(Modifier.weight(1f).height(16.dp).clip(CircleShape).background(BaruckColors.Line)) {
-                    Box(Modifier.fillMaxWidth(p).fillMaxHeight().clip(CircleShape).background(BaruckColors.Green))
+                Box(Modifier.weight(1f).height(12.dp).clip(RoundedCornerShape(3.dp)).background(BaruckColors.Line)) {
+                    Box(Modifier.fillMaxWidth(p).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(BaruckColors.Green))
                 }
                 Spacer(Modifier.width(16.dp))
             }
@@ -169,7 +170,7 @@ fun AvatarPicker(selected: String, onSelect: (String) -> Unit) {
 @Composable
 private fun AvatarStep(vm: BaruckViewModel) {
     Column(Modifier.fillMaxSize().verticalScrollSafe().padding(horizontal = 16.dp)) {
-        MascotSays(R.drawable.baruck_sit, "Oi! Eu sou o Baruck. Escolha o seu bichinho de perfil!", 100.dp)
+        MascotSays(R.drawable.baruck_sit, "Eu sou o Baruck. Escolha o ícone do seu perfil.", 100.dp)
         Spacer(Modifier.height(16.dp))
         AvatarPicker(vm.draftAvatar) { vm.draftAvatar = it }
         Spacer(Modifier.height(16.dp))
@@ -189,7 +190,7 @@ private fun InfoStep(vm: BaruckViewModel) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AvatarImage(vm.draftAvatar, 72.dp, Modifier.bob(4.dp))
             Spacer(Modifier.width(12.dp))
-            Text("Agora conta um pouco sobre você", style = MaterialTheme.typography.titleLarge)
+            Text("Seus dados", style = MaterialTheme.typography.titleLarge)
         }
         BaruckField(vm.draftName, { vm.draftName = it.take(40) }, "Seu nome")
         val (msg, err) = when (vm.nameStatus) {
@@ -205,7 +206,7 @@ private fun InfoStep(vm: BaruckViewModel) {
             "Nome de usuário", prefix = "@", supporting = msg, isError = err
         )
         BaruckField(vm.draftBio, { vm.draftBio = it.take(120) }, "Bio (opcional)", singleLine = false,
-            supporting = "${vm.draftBio.length}/120 · ex.: Produtor de tomate em Vassouras 🍅")
+            supporting = "${vm.draftBio.length}/120 · ex.: Produtor de tomate em Vassouras")
     }
 }
 
@@ -215,7 +216,7 @@ private fun SaveStep(vm: BaruckViewModel) {
         Modifier.fillMaxSize().verticalScrollSafe().padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        MascotSays(R.drawable.baruck_celebrate, "Ficou lindo! Agora é só salvar seu perfil.", 110.dp)
+        MascotSays(R.drawable.baruck_celebrate, "Tudo certo. Agora é só salvar seu perfil.", 110.dp)
         Spacer(Modifier.height(16.dp))
         BaruckCard {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {

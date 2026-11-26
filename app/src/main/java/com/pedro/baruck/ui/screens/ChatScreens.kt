@@ -101,7 +101,7 @@ fun ChatsTab(vm: BaruckViewModel, nav: NavController) {
 
 @Composable
 private fun GroupIcon() {
-    Box(Modifier.size(52.dp).clip(RoundedCornerShape(16.dp)).background(BaruckColors.RedSoft),
+    Box(Modifier.size(52.dp).clip(RoundedCornerShape(8.dp)).background(BaruckColors.RedSoft),
         contentAlignment = Alignment.Center) {
         Image(painterResource(R.drawable.ic_tab_farm), null, Modifier.size(34.dp))
     }
@@ -223,7 +223,7 @@ fun ChatScreen(vm: BaruckViewModel, nav: NavController, kind: String, id: String
                     ) {
                         items(Avatars.stickers, key = { "st_" + it.first }) { (key, res) ->
                             Image(painterResource(res), null,
-                                Modifier.size(84.dp).clip(RoundedCornerShape(16.dp))
+                                Modifier.size(84.dp).clip(RoundedCornerShape(8.dp))
                                     .background(Color(0xFFF7F7F7))
                                     .clickable { send("", key); showStickers = false }
                                     .padding(4.dp))
@@ -238,7 +238,7 @@ fun ChatScreen(vm: BaruckViewModel, nav: NavController, kind: String, id: String
                         value = text, onValueChange = { text = it.take(1000) },
                         placeholder = { Text("Mensagem") },
                         maxLines = 4,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = BaruckColors.Blue, unfocusedBorderColor = BaruckColors.Line,
@@ -268,8 +268,8 @@ fun ChatScreen(vm: BaruckViewModel, nav: NavController, kind: String, id: String
                 when (r) {
                     is ChatItem.Day -> Box(Modifier.fillMaxWidth().padding(vertical = 6.dp), contentAlignment = Alignment.Center) {
                         Text(r.label, style = MaterialTheme.typography.labelSmall, color = BaruckColors.InkSoft,
-                            modifier = Modifier.clip(CircleShape).background(Color.White)
-                                .border(1.dp, BaruckColors.Line, CircleShape).padding(horizontal = 12.dp, vertical = 4.dp))
+                            modifier = Modifier.clip(RoundedCornerShape(4.dp)).background(Color.White)
+                                .border(1.dp, BaruckColors.Line, RoundedCornerShape(4.dp)).padding(horizontal = 12.dp, vertical = 4.dp))
                     }
                     is ChatItem.Msg -> Bubble(r.m, mine = r.m.fromUid == myUid, showHeader = r.showHeader,
                         group = isFarm, modifier = Modifier.animateItem())

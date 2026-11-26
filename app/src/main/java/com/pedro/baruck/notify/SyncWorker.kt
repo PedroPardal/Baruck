@@ -64,7 +64,7 @@ class SyncWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, 
                     Notifier.show(
                         applicationContext, r.id.hashCode(),
                         "⏰ Lembrete: ${r.getString("title") ?: ""}",
-                        "Lavoura $farmName", "baruck"
+                        "Lavoura $farmName", "regador"
                     )
                     shown += r.id
                 }

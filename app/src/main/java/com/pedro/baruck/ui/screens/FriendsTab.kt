@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -116,7 +117,7 @@ fun FriendsTab(vm: BaruckViewModel, nav: androidx.navigation.NavController) {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val medal = when (i) { 0 -> BaruckColors.Yellow; 1 -> Color(0xFFC0C0C0); 2 -> Color(0xFFD7965B); else -> BaruckColors.Line }
-                    Box(Modifier.size(30.dp).clip(CircleShape).background(medal), contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(30.dp).clip(RoundedCornerShape(6.dp)).background(medal), contentAlignment = Alignment.Center) {
                         Text("${i + 1}", fontWeight = FontWeight.Bold, color = BaruckColors.Brown)
                     }
                     Spacer(Modifier.width(10.dp))

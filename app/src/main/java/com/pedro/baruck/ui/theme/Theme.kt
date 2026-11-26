@@ -18,27 +18,27 @@ import com.pedro.baruck.R
 
 // ---- Paleta estilo Duolingo ----
 object BaruckColors {
-    val Green = Color(0xFF58CC02)        // verde principal
-    val GreenDark = Color(0xFF58A700)    // sombra do botão verde
-    val GreenSoft = Color(0xFFD7FFB8)    // fundo suave
-    val Blue = Color(0xFF1CB0F6)
-    val BlueSoft = Color(0xFFDDF4FF)
-    val YellowDark = Color(0xFFE5A400)
-    val OrangeSoft = Color(0xFFFFEBCC)
-    val OrangeDark = Color(0xFFE08600)
-    val RedSoft = Color(0xFFFFDFE0)
-    val BlueDark = Color(0xFF1899D6)
-    val Red = Color(0xFFFF4B4B)
-    val RedDark = Color(0xFFEA2B2B)
-    val Yellow = Color(0xFFFFC800)
-    val Orange = Color(0xFFFF9600)
+    val Green = Color(0xFF3F8F29)        // verde principal
+    val GreenDark = Color(0xFF2E6B1D)    // sombra do botão verde
+    val GreenSoft = Color(0xFFE3F0D8)    // fundo suave
+    val Blue = Color(0xFF1E88C8)
+    val BlueSoft = Color(0xFFDCEBF5)
+    val YellowDark = Color(0xFFC8930A)
+    val OrangeSoft = Color(0xFFF8E3D2)
+    val OrangeDark = Color(0xFFC85A1E)
+    val RedSoft = Color(0xFFF6DEDA)
+    val BlueDark = Color(0xFF166A9C)
+    val Red = Color(0xFFD93F2B)
+    val RedDark = Color(0xFFB32F1F)
+    val Yellow = Color(0xFFF2B705)
+    val Orange = Color(0xFFE8702A)
     val Purple = Color(0xFFCE82FF)
     val Brown = Color(0xFF4A3330)        // marrom do Baruck
     val BandanaGreen = Color(0xFF69A04B)
 
-    val Ink = Color(0xFF3C3C3C)
-    val InkSoft = Color(0xFF777777)
-    val Line = Color(0xFFE5E5E5)
+    val Ink = Color(0xFF2F2F2A)
+    val InkSoft = Color(0xFF6B6B63)
+    val Line = Color(0xFFE2E0D8)
     val Card = Color(0xFFFFFFFF)
     val Bg = Color(0xFFFFFFFF)
 
@@ -49,27 +49,35 @@ object BaruckColors {
     val DarkInk = Color(0xFFF1F7FB)
 }
 
-val Poppins = FontFamily(
-    Font(R.font.poppins_regular, FontWeight.Normal),
-    Font(R.font.poppins_medium, FontWeight.Medium),
-    Font(R.font.poppins_bold, FontWeight.Bold)
+/** Texto: Inter (limpa e legível). Títulos: Big Shoulders (condensada, "de máquina"). */
+val Inter = FontFamily(
+    Font(R.font.inter_regular, FontWeight.Normal),
+    Font(R.font.inter_medium, FontWeight.Medium),
+    Font(R.font.inter_semibold, FontWeight.SemiBold),
+    Font(R.font.inter_bold, FontWeight.Bold)
 )
+val Display = FontFamily(Font(R.font.bigshoulders_bold, FontWeight.Bold))
 
 private fun typography() = Typography(
-    displaySmall = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 28.sp),
-    headlineMedium = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 22.sp),
-    titleLarge = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 19.sp),
-    titleMedium = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 16.sp),
-    bodyLarge = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Normal, fontSize = 16.sp),
-    bodyMedium = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Normal, fontSize = 14.sp),
-    labelLarge = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Bold, fontSize = 15.sp, letterSpacing = 0.5.sp),
-    labelSmall = TextStyle(fontFamily = Poppins, fontWeight = FontWeight.Medium, fontSize = 12.sp)
+    displaySmall = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 36.sp, letterSpacing = 0.3.sp),
+    headlineMedium = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 30.sp, letterSpacing = 0.3.sp),
+    titleLarge = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 25.sp, letterSpacing = 0.3.sp),
+    titleMedium = TextStyle(fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = 16.sp),
+    titleSmall = TextStyle(fontFamily = Inter, fontWeight = FontWeight.SemiBold, fontSize = 14.sp),
+    bodyLarge = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 16.sp),
+    bodyMedium = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 14.sp),
+    bodySmall = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Normal, fontSize = 12.sp),
+    labelLarge = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Bold, fontSize = 14.sp, letterSpacing = 0.8.sp),
+    labelMedium = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Medium, fontSize = 12.sp),
+    labelSmall = TextStyle(fontFamily = Inter, fontWeight = FontWeight.Medium, fontSize = 12.sp)
 )
 
 private val shapes = Shapes(
-    small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(24.dp)
+    extraSmall = RoundedCornerShape(4.dp),
+    small = RoundedCornerShape(6.dp),
+    medium = RoundedCornerShape(8.dp),
+    large = RoundedCornerShape(12.dp),
+    extraLarge = RoundedCornerShape(14.dp)
 )
 
 private val light = lightColorScheme(

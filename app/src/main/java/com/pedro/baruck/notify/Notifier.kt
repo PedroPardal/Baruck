@@ -30,13 +30,13 @@ object Notifier {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val large = runCatching {
-            val res = if (avatarKey?.startsWith("@") == true) Avatars.sticker(avatarKey.drop(1)) else Avatars.res(avatarKey ?: "baruck")
+            val res = if (avatarKey?.startsWith("@") == true) Avatars.sticker(avatarKey.drop(1)) else Avatars.res(avatarKey ?: Avatars.DEFAULT)
             ContextCompat.getDrawable(context, res)?.toBitmap(192, 192)
         }.getOrNull()
 
         val n = NotificationCompat.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
-            .setColor(0xFF58CC02.toInt())
+            .setColor(0xFF3F8F29.toInt())
             .setLargeIcon(large)
             .setContentTitle(title)
             .setContentText(body)

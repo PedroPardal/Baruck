@@ -109,7 +109,7 @@ private fun GreenhouseList(ghs: List<Greenhouse>, harvests: List<Harvest>, onOpe
             val unpriced = mine.count { !it.priced }
             BaruckCard(Modifier.animateItem(), onClick = { onOpen(gh) }) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(60.dp).clip(RoundedCornerShape(16.dp)).background(BaruckColors.GreenSoft),
+                    Box(Modifier.size(60.dp).clip(RoundedCornerShape(8.dp)).background(BaruckColors.GreenSoft),
                         contentAlignment = Alignment.Center) { Text(cropEmoji(gh.cropKey), fontSize = 32.sp) }
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
@@ -160,7 +160,7 @@ private fun CostList(costs: List<Cost>, ghs: List<Greenhouse>, onDelete: (String
             val cat = CostCategories.of(c.category)
             BaruckCard(Modifier.animateItem()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(46.dp).clip(CircleShape).background(Color(0xFFF7F7F7)), contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(46.dp).clip(RoundedCornerShape(8.dp)).background(Color(0xFFF4F3EE)), contentAlignment = Alignment.Center) {
                         Text(cat.emoji, fontSize = 22.sp)
                     }
                     Spacer(Modifier.width(10.dp))
@@ -295,7 +295,7 @@ private fun BigNumber(value: String, label: String, color: Color) {
 private fun Bar(fraction: Float, color: Color) {
     val f by animateFloatAsState(fraction.coerceIn(0f, 1f), tween(700), label = "bar")
     Spacer(Modifier.height(4.dp))
-    Box(Modifier.fillMaxWidth().height(10.dp).clip(CircleShape).background(BaruckColors.Line)) {
-        Box(Modifier.fillMaxWidth(f).fillMaxHeight().clip(CircleShape).background(color))
+    Box(Modifier.fillMaxWidth().height(10.dp).clip(RoundedCornerShape(3.dp)).background(BaruckColors.Line)) {
+        Box(Modifier.fillMaxWidth(f).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(color))
     }
 }
